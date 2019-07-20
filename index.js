@@ -328,6 +328,6 @@ module.exports = function () {
 		return s.replace(/([\.\\\/\?\!\^\~\'\"\$\[\]\(\)\{\}])/g, '\\$1');
 	}
 }
-
+module.exports.default = module.exports;
 module.exports.CONSOLE_ATTRIBUTES = CONSOLE_ATTRIBUTES;
 module.exports.CONSOLE_COLORS = CONSOLE_COLORS;
