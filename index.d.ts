@@ -1,8 +1,12 @@
-export {};
+export { };
+
 declare global {
+	interface ObjectId {
+
+	}
 	interface Array<T> {
-		convertAll(a: (item: T) => Array): Array
-		convertAll(fieldName: string): Array
+		convertAll(a: (item: T) => Array<any>): Array<any>
+		convertAll(fieldName: string): Array<any>
 		toObjectID(): Array<ObjectId>
 		paginate(itensPerPage: number): any
 		sum(fieldName: string): number
@@ -38,7 +42,7 @@ declare global {
 		contains(text: string): boolean
 		isCNPJValido(): boolean
 		isCPFValido(): boolean
-		toDate(selfIfFailed: boolean, replaceValue: any = null): Date
+		toDate(selfIfFailed: boolean, replaceValue?: any): Date
 		formataCEP(): string
 		formataCNPJ(): string
 		formataCPF(): string
@@ -64,10 +68,10 @@ declare global {
 		todayRange(): { start: Date, end: Date }
 	}
 	interface Console {
-		logInfo(message: string = '', ...optionalParams: any[]): void
-		logError(message: string = '', ...optionalParams: any[]): void
-		logImportant(message: string = '', ...optionalParams: any[]): void
-		logWarning(message: string = '', ...optionalParams: any[]): void
+		logInfo(message?: string, ...optionalParams: any[]): void
+		logError(message?: string , ...optionalParams: any[]): void
+		logImportant(message?: string, ...optionalParams: any[]): void
+		logWarning(message?: string, ...optionalParams: any[]): void
 	}
 
 	interface RegExp {
