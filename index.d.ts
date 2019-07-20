@@ -1,3 +1,4 @@
+export {};
 declare global {
 	interface Array<T> {
 		convertAll(a: (item: T) => Array): Array
