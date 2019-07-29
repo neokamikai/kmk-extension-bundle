@@ -60,7 +60,7 @@ module.exports = function () {
 	const LOG_IMPORTANT = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_CYAN + '[Important]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_ERROR = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_RED + '[Error]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_WARNING = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_YELLOW + '[Warning]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
-	const DATE_LOG = () => CONSOLE_COLORS.TEXT_MAGENTA + (new Date()).toJSON().replace(/[TZ]/g, ' ').trim();;
+	const DATE_LOG = () => CONSOLE_COLORS.TEXT_BRIGHT_MAGENTA + (new Date()).toJSON().replace(/[TZ]/g, ' ').trim();;
 	console.log = console.logInfo = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_INFO].concat(Object.values(arguments))); };
 	console.logImportant = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_IMPORTANT].concat(Object.values(arguments))); };
 	console.logError = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_ERROR].concat(Object.values(arguments))); };
