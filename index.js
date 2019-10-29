@@ -54,13 +54,27 @@ const CONSOLE_COLORS = {
 	, TEXT_BRIGHT_LIGHTCYAN: CONSOLE_ATTRIBUTES.BOLD + '\x1b[96m'
 	, TEXT_BRIGHT_WHITE: CONSOLE_ATTRIBUTES.BOLD + '\x1b[97m'
 };
+function safeSqlArg(v) {
+	return v === null || v === undefined?'NULL':
+		typeof v === 'string'? `'${v.replace(/\'/g,"''")}'`:
+		typeof v === 'boolean'? (v?1:0):
+		Object.getPrototypeOf(v) === Date.prototype?
+		(
+			isNaN(v.valueOf())?'NULL':
+			`'${v.toJSON().replace(/[A-Z]/g,' ').trim()}'`
+		):
+		typeof v === 'object'? safeSqlArg(JSON.stringify(v)):
+		isNaN(v)?'NULL':
+		v;
+}
+global.safeSqlArg = safeSqlArg;
 module.exports = function () {
 	console.nativeLog = console.log;
 	const LOG_INFO = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_GREEN + `[Info]` + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_IMPORTANT = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_CYAN + '[Important]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_ERROR = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_RED + '[Error]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_WARNING = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_YELLOW + '[Warning]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
-	const DATE_LOG = () => CONSOLE_COLORS.TEXT_BRIGHT_MAGENTA + (new Date()).toJSON().replace(/[TZ]/g, ' ').trim();;
+	const DATE_LOG = () => CONSOLE_COLORS.TEXT_BRIGHT_MAGENTA + (new Date()).format();
 	console.log = console.logInfo = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_INFO].concat(Object.values(arguments))); };
 	console.logImportant = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_IMPORTANT].concat(Object.values(arguments))); };
 	console.logError = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_ERROR].concat(Object.values(arguments))); };
@@ -132,14 +146,14 @@ module.exports = function () {
 	}
 	Date.prototype.add = function (value, interval = 'miliseconds') {
 		switch (interval) {
-			case 'second': case 'seconds': return this.setSeconds(this.getSeconds() + value);
-			case 'minute': case 'minutes': return this.setMinutes(this.getMinutes() + value);
-			case 'hour': case 'hours': return this.setHours(this.getHours() + value);
-			case 'day': case 'days': return this.setDate(this.getDate() + value);
-			case 'week': case 'weeks': return this.setDate(this.getDate() + value * 7);
-			case 'month': case 'months': return this.setSeconds(this.getMonth() + value);
-			case 'year': case 'years': return this.setFullYear(this.getFullYear() + value);
-			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() + value);
+			case 'second': case 'seconds': this.setSeconds(this.getSeconds() + value); return this;
+			case 'minute': case 'minutes': this.setMinutes(this.getMinutes() + value); return this;
+			case 'hour': case 'hours': this.setHours(this.getHours() + value); return this;
+			case 'day': case 'days': this.setDate(this.getDate() + value); return this;
+			case 'week': case 'weeks': this.setDate(this.getDate() + value * 7); return this;
+			case 'month': case 'months': this.setSeconds(this.getMonth() + value); return this;
+			case 'year': case 'years': this.setFullYear(this.getFullYear() + value); return this;
+			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() + value); return this;
 				break;
 			default:
 				return this;
@@ -149,7 +163,7 @@ module.exports = function () {
 
 	}
 	Date.prototype.getEndOfMonth = function () {
-		
+
 	}*/
 	Date.prototype.zeroTime = function () {
 		this.setHours(0);
@@ -166,19 +180,52 @@ module.exports = function () {
 		return this;
 	}
 	Date.prototype.toRange = function () {
-		return { start: this.zeroTime(), end: this.endOfDay() };
+		return { start: (new Date(this.valueOf())).zeroTime(), end: new Date(this.valueOf()).endOfDay() };
 	}
 	Date.today = function () {
 		return new Date().zeroTime();
 	}
 	Date.tomorrow = function () {
-		return (new Date()).add(1, 'day').zeroTime();
+		return Date.today().add(1,'days');
 	}
 	Date.yesterday = function () {
-		return (new Date()).subtract(1, 'day').zeroTime();
+		return Date.today().subtract(1,'days');
 	}
 	Date.todayRange = function () {
 		return (new Date()).toRange();
+	}
+	Date.locales = {
+		'pt-br': {
+			monthNames: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
+			shortMonthNames: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
+			weekNames: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
+			weekShortNames:['dom','seg','ter','qua','qui','sex','sáb'],
+			weekShortNames2:['do','se','te','qu','qu','se','sá'],
+			weekInitials:['d','s','t','q','q','s','s']
+		},
+		'en': {
+			monthNames: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
+			shortMonthNames: ['jan', 'fev', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
+			weekNames: ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'],
+			weekShortNames:['sun','mon','tue','wed','thu','fri','sat'],
+			weekShortNames2:['su','mo','tu','we','th','fr','sa'],
+			weekInitials:['s','m','t','w','t','f','s']
+		}
+	};
+	Date.prototype.format = function (fmt, locale) {
+		let fc = t => `${t || ''}`.toUpperCase().substr(0, 1) + `${t || ''}`.toLowerCase().substr(1), ac = t => `${t || ''}`.toUpperCase(), lc = t => `${t || ''}`.toLowerCase(), lp = (t, l) => `${t || ''}`.padStart(l, '0');
+		locale = Date.locales[locale || 'pt-br'];
+		let year = this.getFullYear(), month = this.getMonth(), date = this.getDate(), hours = this.getHours(), minutes = this.getMinutes(), seconds = this.getSeconds(), milliseconds = this.getMilliseconds();
+		let parts = {
+			yyyy: year.toString(), yy: year.toString().substr(2), YYYY: year.toString(), YY: year.toString().substr(2),
+			M: (1 + month).toString(), MM: lp(1 + month, 2), MMM: ac(locale.shortMonthNames[month]), mmm: lc(locale.shortMonthNames[month]), Mmm: fc(locale.shortMonthNames[month])
+			, MMMM: ac(locale.monthNames[month]), mmmm: lc(locale.monthNames[month]), Mmmm: fc(locale.monthNames[month]),
+			d: date.toString(), dd: lp(date, 2), D: date.toString(), DD: lp(date, 2),
+			H: hours.toString(), h: hours.toString(), HH: lp(hours, 2), hh: lp(hours, 2), m: minutes.toString(), mm: lp(minutes, 2), s: seconds.toString(), ss: lp(seconds, 2), S: milliseconds.toString(), SSS: lp(milliseconds, 3), sss: lp(milliseconds, 3)
+		};
+		let formats = { default: `${parts.yyyy}-${parts.MM}-${parts.dd} ${parts.hh}:${parts.mm}:${parts.ss}.${parts.sss}` };
+		if (!fmt) return formats.default;
+		return parts;
 	}
 	/* Native extensions  */
 

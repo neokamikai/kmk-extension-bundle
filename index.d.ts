@@ -1,6 +1,24 @@
 export { };
 
 declare global {
+	/**
+	 * Converts value regarding:
+	 *
+	 * string => returns '...' escaping all single quotes with an extra single quote
+	 *
+	 * number => returns the number itself
+	 *
+	 * boolean => wraps to: return value?1:0;
+	 *
+	 * Date => returns date string formatted as: YYYY-MM-DD HH:mm:ss.SSS with quotes, if invalid date returns 'NULL' as string without quotes
+	 *
+	 * null | undefined | NaN => returns 'NULL' as string without quotes
+	 *
+	 * object => will be parsed to  safeSqlArg(JSON.stringify(object))
+	 *
+	 * @param v
+	 */
+	function safeSqlArg(value: string|number|boolean|Date|null):string;
 	interface ObjectId {
 
 	}
@@ -13,7 +31,7 @@ declare global {
 		sum(valueSelector: (item: T) => number): number
 		media(fieldName: string): number
 		media(valueSelector: (item: T) => number): number
-		
+
 		last(): T
 		top(nElements: number): Array<T>
 		bottom(nElements: number): Array<T>

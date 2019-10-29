@@ -1,6 +1,6 @@
 {
   "name": "kmk-extension-bundle",
-  "version": "1.0.4",
+  "version": "1.1.10",
   "description": "",
   "main": "index.js",
   "repository": {
@@ -20,5 +20,6 @@
   "bugs": {
     "url": "https://github.com/neokamikai/kmk-extension-bundle/issues"
   },
-  "homepage": "https://github.com/neokamikai/kmk-extension-bundle#readme"
+  "homepage": "https://github.com/neokamikai/kmk-extension-bundle#readme",
+  "typings": "index.d.ts"
 }
