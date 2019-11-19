@@ -212,20 +212,78 @@ module.exports = function () {
 			weekInitials:['s','m','t','w','t','f','s']
 		}
 	};
-	Date.prototype.format = function (fmt, locale) {
-		let fc = t => `${t || ''}`.toUpperCase().substr(0, 1) + `${t || ''}`.toLowerCase().substr(1), ac = t => `${t || ''}`.toUpperCase(), lc = t => `${t || ''}`.toLowerCase(), lp = (t, l) => `${t || ''}`.padStart(l, '0');
+	Date.locales['en-us'] = Date.locales['en'];
+	Date.locales['pt-BR'] = Date.locales['pt-br'];
+	Date.prototype.format = function (str, locale) {
 		locale = Date.locales[locale || 'pt-br'];
-		let year = this.getFullYear(), month = this.getMonth(), date = this.getDate(), hours = this.getHours(), minutes = this.getMinutes(), seconds = this.getSeconds(), milliseconds = this.getMilliseconds();
-		let parts = {
-			yyyy: year.toString(), yy: year.toString().substr(2), YYYY: year.toString(), YY: year.toString().substr(2),
-			M: (1 + month).toString(), MM: lp(1 + month, 2), MMM: ac(locale.shortMonthNames[month]), mmm: lc(locale.shortMonthNames[month]), Mmm: fc(locale.shortMonthNames[month])
-			, MMMM: ac(locale.monthNames[month]), mmmm: lc(locale.monthNames[month]), Mmmm: fc(locale.monthNames[month]),
-			d: date.toString(), dd: lp(date, 2), D: date.toString(), DD: lp(date, 2),
-			H: hours.toString(), h: hours.toString(), HH: lp(hours, 2), hh: lp(hours, 2), m: minutes.toString(), mm: lp(minutes, 2), s: seconds.toString(), ss: lp(seconds, 2), S: milliseconds.toString(), SSS: lp(milliseconds, 3), sss: lp(milliseconds, 3)
+		var str2 = str;
+		var month = locale.monthNames[d.getMonth()];
+		var shortMonth = locale.shortMonthNames[d.getMonth()];
+		var weekNames = locale.short
+		/**
+		 * TODO: examples: "-03:00" or "+03:00"
+		 */
+		var tz = '';//Ex:
+		var f = {
+			YYYY: d.getFullYear().toString(),
+			YY: d.getFullYear().toString().substr(d.getFullYear().toString().length - 2),
+			MMMM: month.toUpperCase(),
+			mmmm: month.toLowerCase(),
+			Mmmm: month.substr(0, 1).toUpperCase() + month.substr(1).toLowerCase(),
+			Mmm: month.substr(0, 1).toUpperCase() + month.substr(1, 2).toLowerCase(),
+			mmm: month.substr(0, 3).toLowerCase(), MMM: month.substr(0, 3).toUpperCase(),
+			MM: (d.getMonth() + 1).toString().padStart(2, '0'), M: (d.getMonth() + 1).toString(),
+			dd: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
+			DD: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
+			HH: d.getHours().toString().padStart(2, '0'), H: d.getHours().toString(),
+			hh: (d.getHours() % 12).toString().padStart(2, '0'), h: (d.getHours() % 12).toString(),
+			mm: d.getMinutes().toString().padStart(2, '0'), m: d.getMinutes().toString(),
+			sss: d.getMilliseconds().toString().padStart(3, '0'),
+			SSS: d.getMilliseconds().toString().padStart(3, '0'),
+			SS: d.getMilliseconds().toString().padStart(3, '0'),
+			S: d.getMilliseconds().toString().padStart(3, '0'),
+			ss: d.getSeconds().toString().padStart(2, '0'), s: d.getSeconds().toString(),
+			P: d.getHours() <= 12 ? 'AM' : 'PM',
+			T:'T',
+			TZ:tz
 		};
-		let formats = { default: `${parts.yyyy}-${parts.MM}-${parts.dd} ${parts.hh}:${parts.mm}:${parts.ss}.${parts.sss}` };
-		if (!fmt) return formats.default;
-		return parts;
+		let formats = {
+			default: `${f.yyyy}-${f.MM}-${f.dd} ${f.HH}:${f.mm}:${f.ss}.${f.sss}`,
+			json: `${f.yyyy}-${f.MM}-${f.dd}T${f.HH}:${f.mm}:${f.ss}.${f.sss}Z`,
+			JSON: `${f.yyyy}-${f.MM}-${f.dd}T${f.HH}:${f.mm}:${f.ss}.${f.sss}Z`,
+			sql: `${f.yyyy}-${f.MM}-${f.dd} ${f.HH}:${f.mm}:${f.ss}.${f.sss}`,
+			SQL: `${f.yyyy}-${f.MM}-${f.dd} ${f.HH}:${f.mm}:${f.ss}.${f.sss}`,
+			utc: `${f.yyyy}-${f.MM}-${f.dd}T${f.HH}:${f.mm}:${f.ss}.${f.sss}${f.TZ}`,
+			UTC: `${f.yyyy}-${f.MM}-${f.dd}T${f.HH}:${f.mm}:${f.ss}.${f.sss}${f.TZ}`,
+		};
+		if (formats[str]) return formats[str];
+		if (!str) return formats.default;
+		var w = [], replaceList = [];
+		var m;
+		while (m = str2.match(/\[([^\[\]]+)\]/)) {
+			if (m) {
+				w.push(m);
+				replaceList.push({ search: '_$(' + (w.length - 1) + ')', replacement: m[1] });
+				str2 = str2.replace(m[0], '_$(' + (w.length - 1) + ')');
+			} else break;
+			if (w.length > 50) break;
+		}
+		w = [];
+		for (let a of Object.keys(f)) {
+			while (m = str2.match(new RegExp(a))) {
+				if (m) {
+					w.push(m);
+					let search = '$_(' + (w.length - 1) + ')';
+					str2 = str2.replace(new RegExp(a), search);
+					replaceList.push({ search: search, replacement: f[a] });
+				} else break;
+				if (w.length > 1000) break;
+			}
+		}
+		for (let r of replaceList) {
+			str2 = str2.replace(r.search, r.replacement);
+		}
+		return str2;
 	}
 	/* Native extensions  */
 
