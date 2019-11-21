@@ -19,6 +19,14 @@ declare global {
 	 * @param v
 	 */
 	function safeSqlArg(value: string|number|boolean|Date|null):string;
+	/**
+	 *
+	 * @param value
+	 * @param decimalPlaces If undefined or null, it will be predicted (ex: 152.20 => decimalPlaces: 1; 123.402 => 3)
+	 * @param decimalSeparator Default: .
+	 * @param thousandsSeparator Default: ,
+	 */
+	function number_format(value:number, decimalPlaces?: number, decimalSeparator?:string, thousandsSeparator?: string);
 	interface ObjectId {
 
 	}

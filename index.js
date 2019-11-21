@@ -55,19 +55,42 @@ const CONSOLE_COLORS = {
 	, TEXT_BRIGHT_WHITE: CONSOLE_ATTRIBUTES.BOLD + '\x1b[97m'
 };
 function safeSqlArg(v) {
-	return v === null || v === undefined?'NULL':
-		typeof v === 'string'? `'${v.replace(/\'/g,"''")}'`:
-		typeof v === 'boolean'? (v?1:0):
-		Object.getPrototypeOf(v) === Date.prototype?
-		(
-			isNaN(v.valueOf())?'NULL':
-			`'${v.toJSON().replace(/[A-Z]/g,' ').trim()}'`
-		):
-		typeof v === 'object'? safeSqlArg(JSON.stringify(v)):
-		isNaN(v)?'NULL':
-		v;
+	return v === null || v === undefined ? 'NULL' :
+		typeof v === 'string' ? `'${v.replace(/\'/g, "''")}'` :
+			typeof v === 'boolean' ? (v ? 1 : 0) :
+				Object.getPrototypeOf(v) === Date.prototype ?
+					(
+						isNaN(v.valueOf()) ? 'NULL' :
+							`'${v.toJSON().replace(/[A-Z]/g, ' ').trim()}'`
+					) :
+					typeof v === 'object' ? safeSqlArg(JSON.stringify(v)) :
+						isNaN(v) ? 'NULL' :
+							v;
+}
+function number_format(n, decimalPlaces, decimalSep, thousandsSep) {
+	if(typeof n === 'string' && !isNaN(n*1)) return number_format(n*1, decimalPlaces, decimalSep, thousandsSep);
+	decimalSep = decimalSep || '.';
+	thousandsSep = thousandsSep || ',';
+	if (typeof decimalPlaces === 'undefined' || decimalPlaces === null) {
+		if (typeof n === 'number') {
+			decimalPlaces = n.toString().indexOf('.') === -1 ? 0 :
+				n.toString().length - n.toString().indexOf('.') - 1
+		}
+		else {
+			decimalPlaces = (decimalPlaces || 0);
+		}
+	}
+	if (typeof n === 'number')
+		return (function(n){return n.substr(n.indexOf(thousandsSep)===0?1:0)})(n.toFixed(decimalPlaces).split('.')
+			.map(function(v, i) {
+				return i === 0 ?
+					(v).split('').reverse().join('').replace(/(\d{3})/g, '$1' + thousandsSep)
+						.split('').reverse().join('') : v;
+			}).filter(function(v, i) { return i === 0 ? true : decimalPlaces > 0; }).join(decimalSep));
+	return n;
 }
 global.safeSqlArg = safeSqlArg;
+global.number_format = number_format;
 module.exports = function () {
 	console.nativeLog = console.log;
 	const LOG_INFO = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_GREEN + `[Info]` + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
@@ -98,15 +121,15 @@ module.exports = function () {
 		return pages
 	};
 	if (typeof Array.prototype.flat !== 'function')
-	Array.prototype.flat = function () {
-		var a = [];
-		for (var e of this) {
-			if (Array.isArray(e))
-				a = a.concat(e.flat());
-			else
-				a.push(e);
-		}
-		return a;
+		Array.prototype.flat = function () {
+			var a = [];
+			for (var e of this) {
+				if (Array.isArray(e))
+					a = a.concat(e.flat());
+				else
+					a.push(e);
+			}
+			return a;
 		};
 	String.prototype.md5 = function () {
 		return require('crypto').createHash('md5').update(this.toString()).digest('hex');
@@ -186,10 +209,10 @@ module.exports = function () {
 		return new Date().zeroTime();
 	}
 	Date.tomorrow = function () {
-		return Date.today().add(1,'days');
+		return Date.today().add(1, 'days');
 	}
 	Date.yesterday = function () {
-		return Date.today().subtract(1,'days');
+		return Date.today().subtract(1, 'days');
 	}
 	Date.todayRange = function () {
 		return (new Date()).toRange();
@@ -198,18 +221,18 @@ module.exports = function () {
 		'pt-br': {
 			monthNames: ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'],
 			shortMonthNames: ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'],
-			weekNames: ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'],
-			weekShortNames:['dom','seg','ter','qua','qui','sex','sáb'],
-			weekShortNames2:['do','se','te','qu','qu','se','sá'],
-			weekInitials:['d','s','t','q','q','s','s']
+			weekNames: ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'],
+			weekShortNames: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'],
+			weekShortNames2: ['do', 'se', 'te', 'qu', 'qu', 'se', 'sá'],
+			weekInitials: ['d', 's', 't', 'q', 'q', 's', 's']
 		},
 		'en': {
 			monthNames: ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
 			shortMonthNames: ['jan', 'fev', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
-			weekNames: ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'],
-			weekShortNames:['sun','mon','tue','wed','thu','fri','sat'],
-			weekShortNames2:['su','mo','tu','we','th','fr','sa'],
-			weekInitials:['s','m','t','w','t','f','s']
+			weekNames: ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'],
+			weekShortNames: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+			weekShortNames2: ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'],
+			weekInitials: ['s', 'm', 't', 'w', 't', 'f', 's']
 		}
 	};
 	Date.prototype.format = function (fmt, locale) {
