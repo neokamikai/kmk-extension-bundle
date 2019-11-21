@@ -85,7 +85,17 @@ declare global {
 		zeroTime(): Date
 		endOfDay(): Date
 		toRange(): { start: Date, end: Date }
-		getTimezoneOffsetString(): string
+		getTimezoneOffsetString(): string;
+		/**
+		 * You can enclose static text with brackets, i.e: 'MM/DD/YYYY [at] HH[h]mm[m]'
+		 * @param fmt 
+		 */
+		format(fmt?: string): string;
+		/**
+		 * 
+		 * @param fmt 
+		 */
+		format(fmt?:'default'|'json'|'sql'|'utc'|'JSON'|'SQL'|'UTC'): string
 	}
 	interface DateConstructor {
 		today(): Date
