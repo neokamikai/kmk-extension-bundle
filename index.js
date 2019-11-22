@@ -239,6 +239,7 @@ module.exports = function () {
 	Date.locales['pt-BR'] = Date.locales['pt-br'];
 	Date.prototype.format = function (str, locale) {
 		locale = Date.locales[locale || 'pt-br'];
+		var d = this;
 		var str2 = str;
 		var month = locale.monthNames[d.getMonth()];
 		var shortMonth = locale.shortMonthNames[d.getMonth()];
@@ -248,7 +249,9 @@ module.exports = function () {
 		 */
 		var tz = '';//Ex:
 		var f = {
+			yyyy: d.getFullYear().toString(),
 			YYYY: d.getFullYear().toString(),
+			yy: d.getFullYear().toString().substr(d.getFullYear().toString().length - 2),
 			YY: d.getFullYear().toString().substr(d.getFullYear().toString().length - 2),
 			MMMM: month.toUpperCase(),
 			mmmm: month.toLowerCase(),
