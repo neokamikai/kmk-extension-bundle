@@ -259,7 +259,7 @@ module.exports = function () {
 			Mmm: month.substr(0, 1).toUpperCase() + month.substr(1, 2).toLowerCase(),
 			mmm: month.substr(0, 3).toLowerCase(), MMM: month.substr(0, 3).toUpperCase(),
 			MM: (d.getMonth() + 1).toString().padStart(2, '0'), M: (d.getMonth() + 1).toString(),
-			dd: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
+			dd: d.getDate().toString().padStart(2, '0'), d: (d.getDate()).toString(),
 			DD: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
 			HH: d.getHours().toString().padStart(2, '0'), H: d.getHours().toString(),
 			hh: (d.getHours() % 12).toString().padStart(2, '0'), h: (d.getHours() % 12).toString(),
