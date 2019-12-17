@@ -1,5 +1,5 @@
 export { };
-
+export default function ();
 declare global {
 	/**
 	 * Converts value regarding:
@@ -18,7 +18,17 @@ declare global {
 	 *
 	 * @param v
 	 */
-	function safeSqlArg(value: string|number|boolean|Date|null):string;
+	export function safeSqlArg(value: string | number | boolean | Date | null | bigint): string;
+	/**
+	 * Verifica se um número de CPF é válido
+	 * @param cpf Número do CPF (não importa se está formatado)
+	 */
+	export function validaCPF(cpf: string): boolean;
+	/**
+	 * Verifica se um número de CNPJ é válido
+	 * @param cnpj Número do CNPJ (não importa se está formatado)
+	 */
+	export function validaCNPJ(cnpj: string): boolean;
 	/**
 	 *
 	 * @param value
@@ -26,11 +36,11 @@ declare global {
 	 * @param decimalSeparator Default: .
 	 * @param thousandsSeparator Default: ,
 	 */
-	function number_format(value:number, decimalPlaces?: number, decimalSeparator?:string, thousandsSeparator?: string);
+	export function number_format(value: number, decimalPlaces?: number, decimalSeparator?: string, thousandsSeparator?: string);
 	interface ObjectId {
 
 	}
-	interface Array<T> {
+	export interface Array<T> {
 		convertAll(a: (item: T) => Array<any>): Array<any>
 		convertAll(fieldName: string): Array<any>
 		toObjectID(): Array<ObjectId>
@@ -44,7 +54,7 @@ declare global {
 		top(nElements: number): Array<T>
 		bottom(nElements: number): Array<T>
 	}
-	interface Number {
+	export interface Number {
 		isBetween(min: number, max: number): boolean
 		trunc(decimalPlaces: number): number
 		round(decimalPlaces: number, roundUpFrom: number): number
@@ -56,10 +66,10 @@ declare global {
 		toArray(offset: number): Array<number>
 		fraction(): number
 	}
-	interface RegExpConstructor {
+	export interface RegExpConstructor {
 		escape(s: string): string
 	}
-	interface String {
+	export interface String {
 		toObjectID(): ObjectId
 		/** Returns a md5-hash-hex string */
 		md5(): string
@@ -78,7 +88,7 @@ declare global {
 		right(nChars: number): string
 		mask(mask: string): string
 	}
-	interface Date {
+	export interface Date {
 		toDate(): Date
 		subtract(value: number, interval: 'miliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): Date
 		add(value: number, interval: 'miliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): Date
@@ -88,29 +98,29 @@ declare global {
 		getTimezoneOffsetString(): string;
 		/**
 		 * You can enclose static text with brackets, i.e: 'MM/DD/YYYY [at] HH[h]mm[m]'
-		 * @param fmt 
+		 * @param fmt
 		 */
 		format(fmt?: string): string;
 		/**
-		 * 
-		 * @param fmt 
+		 *
+		 * @param fmt
 		 */
-		format(fmt?:'default'|'json'|'sql'|'utc'|'JSON'|'SQL'|'UTC'): string
+		format(fmt?: 'default' | 'json' | 'sql' | 'utc' | 'JSON' | 'SQL' | 'UTC'): string
 	}
-	interface DateConstructor {
+	export interface DateConstructor {
 		today(): Date
 		tomorrow(): Date
 		yesterday(): Date
 		todayRange(): { start: Date, end: Date }
 	}
-	interface Console {
-		logInfo(message?: string, ...optionalParams: any[]): void
-		logError(message?: string , ...optionalParams: any[]): void
-		logImportant(message?: string, ...optionalParams: any[]): void
-		logWarning(message?: string, ...optionalParams: any[]): void
+	export interface Console {
+		logInfo(message?: any, ...optionalParams: any[]): void
+		logError(message?: any, ...optionalParams: any[]): void
+		logImportant(message?: any, ...optionalParams: any[]): void
+		logWarning(message?: any, ...optionalParams: any[]): void
 	}
 
-	interface RegExp {
+	export interface RegExp {
 		escape(s: string): string
 	}
 }
