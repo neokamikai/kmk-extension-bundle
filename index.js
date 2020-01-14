@@ -252,15 +252,14 @@ module.exports = function () {
 	};
 	Date.prototype.subtract = function (value, interval = 'miliseconds') {
 		switch (interval) {
-			case 'second': case 'seconds': return this.setSeconds(this.getSeconds() - value);
-			case 'minute': case 'minutes': return this.setMinutes(this.getMinutes() - value);
-			case 'hour': case 'hours': return this.setHours(this.getHours() - value);
-			case 'day': case 'days': return this.setDate(this.getDate() - value);
-			case 'week': case 'weeks': return this.setDate(this.getDate() - value * 7);
-			case 'month': case 'months': return this.setMonth(this.getMonth() - value);
-			case 'year': case 'years': return this.setFullYear(this.getFullYear() - value);
-			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() - value);
-				break;
+			case 'second': case 'seconds': this.setSeconds(this.getSeconds() - value); return this;
+			case 'minute': case 'minutes': this.setMinutes(this.getMinutes() - value); return this;
+			case 'hour': case 'hours': this.setHours(this.getHours() - value); return this;
+			case 'day': case 'days': this.setDate(this.getDate() - value); return this;
+			case 'week': case 'weeks': this.setDate(this.getDate() - value * 7); return this;
+			case 'month': case 'months': this.setMonth(this.getMonth() - value); return this;
+			case 'year': case 'years': this.setFullYear(this.getFullYear() - value); return this;
+			case 'milisecond': case 'miliseconds': setMilliseconds(this.getMilliseconds() - value); return this;
 			default:
 				return this;
 		}
@@ -275,7 +274,6 @@ module.exports = function () {
 			case 'month': case 'months': this.setMonth(this.getMonth() + value); return this;
 			case 'year': case 'years': this.setFullYear(this.getFullYear() + value); return this;
 			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() + value); return this;
-				break;
 			default:
 				return this;
 		}
