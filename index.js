@@ -54,21 +54,119 @@ const CONSOLE_COLORS = {
 	, TEXT_BRIGHT_LIGHTCYAN: CONSOLE_ATTRIBUTES.BOLD + '\x1b[96m'
 	, TEXT_BRIGHT_WHITE: CONSOLE_ATTRIBUTES.BOLD + '\x1b[97m'
 };
+function validaEAN14(ean) {
+	return ean[13] == Math.ceil(((parseInt(ean[0]) + parseInt(ean[2]) + parseInt(ean[4]) + parseInt(ean[6]) + parseInt(ean[8]) + parseInt(ean[10]) + parseInt(ean[12])) * 3 + (parseInt(ean[1]) + parseInt(ean[3]) + parseInt(ean[5]) + parseInt(ean[7]) + parseInt(ean[9]) + parseInt(ean[11])) * 1) / 10) * 10 - ((parseInt(ean[0]) + parseInt(ean[2]) + parseInt(ean[4]) + parseInt(ean[6]) + parseInt(ean[8]) + parseInt(ean[10]) + parseInt(ean[12])) * 3 + (parseInt(ean[1]) + parseInt(ean[3]) + parseInt(ean[5]) + parseInt(ean[7]) + parseInt(ean[9]) + parseInt(ean[11])) * 1);
+}
+global.validaEAN14 = validaEAN14;
+function validaEAN13(ean) {
+	return ean[12] == Math.ceil(((parseInt(ean[11]) + parseInt(ean[9]) + parseInt(ean[7]) + parseInt(ean[5]) + parseInt(ean[3]) + parseInt(ean[1])) * 3 + (parseInt(ean[10]) + parseInt(ean[8]) + parseInt(ean[6]) + parseInt(ean[4]) + parseInt(ean[2]) + parseInt(ean[0]))) / 10) * 10 - ((parseInt(ean[11]) + parseInt(ean[9]) + parseInt(ean[7]) + parseInt(ean[5]) + parseInt(ean[3]) + parseInt(ean[1])) * 3 + (parseInt(ean[10]) + parseInt(ean[8]) + parseInt(ean[6]) + parseInt(ean[4]) + parseInt(ean[2]) + parseInt(ean[0])));
+}
+global.validaEAN13 = validaEAN13;
+function validaCPF(cpf) {
+	if (typeof cpf == 'number' && !isNaN(cpf)) cpf = cpf.toString().padStart(11, '0');
+	if (typeof cpf == 'string') cpf = cpf.replace(/[^\d]+/g, '');
+	if (typeof cpf !== 'string') return false;
+	if (cpf.length < 11) return false;
+	if (!/\d{11}|\d{3}\.\d{3}\.\d{3}\-\d{2}/.test(cpf)) return false;
+	cpf = cpf.toString().replace(/[^\d]+/g, '');
+	var m1 = [10, 9, 8, 7, 6, 5, 4, 3, 2], m2 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2];
+	var numeros = cpf.split("");
+	if (numeros.length < 11 || /0{11}|1{11}|2{11}|3{11}|4{11}|5{11}|6{11}|7{11}|8{11}|8{11}/.test(cpf)) return false;
+	var resto = (
+		(m1[0] * parseInt(numeros[0])) +
+		(m1[1] * parseInt(numeros[1])) +
+		(m1[2] * parseInt(numeros[2])) +
+		(m1[3] * parseInt(numeros[3])) +
+		(m1[4] * parseInt(numeros[4])) +
+		(m1[5] * parseInt(numeros[5])) +
+		(m1[6] * parseInt(numeros[6])) +
+		(m1[7] * parseInt(numeros[7])) +
+		(m1[8] * parseInt(numeros[8]))) % 11;
+	var dv;
+	if (resto < 2)
+		dv = '0';
+	else
+		dv = (11 - resto).toString();
+	resto = (
+		(m2[0] * parseInt(numeros[0])) +
+		(m2[1] * parseInt(numeros[1])) +
+		(m2[2] * parseInt(numeros[2])) +
+		(m2[3] * parseInt(numeros[3])) +
+		(m2[4] * parseInt(numeros[4])) +
+		(m2[5] * parseInt(numeros[5])) +
+		(m2[6] * parseInt(numeros[6])) +
+		(m2[7] * parseInt(numeros[7])) +
+		(m2[8] * parseInt(numeros[8])) +
+		(m2[9] * parseInt(numeros[9]))) % 11;
+	if (resto < 2)
+		dv += '0';
+	else
+		dv += (11 - resto).toString();
+	return dv === numeros.slice(numeros.length - 2, numeros.length).join("");
+}
+global.validaCPF = validaCPF;
+function validaCNPJ(cnpj) {
+	if (typeof cnpj == 'number' && !isNaN(cnpj)) cnpj = cnpj.toString().padStart(11, '0');
+	if (typeof cnpj == 'string') cnpj = cnpj.replace(/[^\d]+/g, '');
+	if (typeof cnpj !== 'string') return false;
+	if (cnpj.length < 14) return false;
+	if (!/\d{14}|\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}/.test(cnpj)) return false;
+	cnpj = cnpj.toString().replace(/[^\d]+/g, '');
+	var m1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2], m2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+	var numeros = cnpj.split("");
+	if (numeros.length < 14 || /0{14}|1{14}|2{14}|3{14}|4{14}|5{14}|6{14}|7{14}|8{14}|8{14}/.test(cnpj)) return false;
+
+	var resto = (
+		(m1[0] * parseInt(numeros[0])) +
+		(m1[1] * parseInt(numeros[1])) +
+		(m1[2] * parseInt(numeros[2])) +
+		(m1[3] * parseInt(numeros[3])) +
+		(m1[4] * parseInt(numeros[4])) +
+		(m1[5] * parseInt(numeros[5])) +
+		(m1[6] * parseInt(numeros[6])) +
+		(m1[7] * parseInt(numeros[7])) +
+		(m1[8] * parseInt(numeros[8])) +
+		(m1[9] * parseInt(numeros[9])) +
+		(m1[10] * parseInt(numeros[10])) +
+		(m1[11] * parseInt(numeros[11]))) % 11;
+	var dv = "";
+	if (resto < 2) { dv = '0'; }
+	else { dv = (11 - resto).toString(); }
+	resto = (
+		(m2[0] * parseInt(numeros[0])) +
+		(m2[1] * parseInt(numeros[1])) +
+		(m2[2] * parseInt(numeros[2])) +
+		(m2[3] * parseInt(numeros[3])) +
+		(m2[4] * parseInt(numeros[4])) +
+		(m2[5] * parseInt(numeros[5])) +
+		(m2[6] * parseInt(numeros[6])) +
+		(m2[7] * parseInt(numeros[7])) +
+		(m2[8] * parseInt(numeros[8])) +
+		(m2[9] * parseInt(numeros[9])) +
+		(m2[10] * parseInt(numeros[10])) +
+		(m2[11] * parseInt(numeros[11])) +
+		(m2[12] * parseInt(numeros[12]))) % 11;
+	if (resto < 2) { dv += '0'; }
+	else { dv += (11 - resto).toString(); }
+	return dv == numeros.slice(numeros.length - 2, numeros.length).join("");
+}
+global.validaCNPJ = validaCNPJ;
 function safeSqlArg(v) {
 	return v === null || v === undefined ? 'NULL' :
-		typeof v === 'string' ? `'${v.replace(/\'/g, "''")}'` :
-			typeof v === 'boolean' ? (v ? 1 : 0) :
-				Object.getPrototypeOf(v) === Date.prototype ?
-					(
-						isNaN(v.valueOf()) ? 'NULL' :
-							`'${v.toJSON().replace(/[A-Z]/g, ' ').trim()}'`
-					) :
-					typeof v === 'object' ? safeSqlArg(JSON.stringify(v)) :
-						isNaN(v) ? 'NULL' :
-							v;
+		typeof v === 'function' && v === Date.now ? 'GETDATE()' :
+			typeof v === 'string' ? `'${v.replace(/\'/g, "''")}'` :
+				typeof v === 'boolean' ? (v ? 1 : 0) :
+					Object.getPrototypeOf(v) === Date.prototype ?
+						(
+							isNaN(v.valueOf()) ? 'NULL' :
+								`'${v.toJSON().replace(/[A-Z]/g, ' ').trim()}'`
+						) :
+						typeof v === 'object' ? safeSqlArg(JSON.stringify(v)) :
+							isNaN(v) ? 'NULL' :
+								v;
 }
 function number_format(n, decimalPlaces, decimalSep, thousandsSep) {
-	if(typeof n === 'string' && !isNaN(n*1)) return number_format(n*1, decimalPlaces, decimalSep, thousandsSep);
+	if (typeof n === 'string' && !isNaN(n * 1)) return number_format(n * 1, decimalPlaces, decimalSep, thousandsSep);
 	decimalSep = decimalSep || '.';
 	thousandsSep = thousandsSep || ',';
 	if (typeof decimalPlaces === 'undefined' || decimalPlaces === null) {
@@ -81,12 +179,12 @@ function number_format(n, decimalPlaces, decimalSep, thousandsSep) {
 		}
 	}
 	if (typeof n === 'number')
-		return (function(n){return n.substr(n.indexOf(thousandsSep)===0?1:0)})(n.toFixed(decimalPlaces).split('.')
-			.map(function(v, i) {
+		return (function (n) { return n.substr(n.indexOf(thousandsSep) === 0 ? 1 : 0) })(n.toFixed(decimalPlaces).split('.')
+			.map(function (v, i) {
 				return i === 0 ?
 					(v).split('').reverse().join('').replace(/(\d{3})/g, '$1' + thousandsSep)
 						.split('').reverse().join('') : v;
-			}).filter(function(v, i) { return i === 0 ? true : decimalPlaces > 0; }).join(decimalSep));
+			}).filter(function (v, i) { return i === 0 ? true : decimalPlaces > 0; }).join(decimalSep));
 	return n;
 }
 global.safeSqlArg = safeSqlArg;
@@ -137,8 +235,8 @@ module.exports = function () {
 	String.prototype.somenteNumeros = function () { return this.replace(/[^\d]+/g, ''); }
 	String.prototype.reverse = function () { return this.split('').reverse().join(''); };
 	String.prototype.contains = function () { return this.indexOf.apply(this, arguments) >= 0; };
-	String.prototype.isCNPJValido = function () { return validaCNPJ(this); }
-	String.prototype.isCPFValido = function () { return validaCPF(this); }
+	String.prototype.isCNPJValido = function () { return validaCNPJ(this.toString()); }
+	String.prototype.isCPFValido = function () { return validaCPF(this.toString()); }
 	String.prototype.safeSqlArg = function () { return "'" + this.replace(/\'/g, "''") + "'"; };
 
 	Number.prototype.safeSqlArg = function () { return this.toString().safeSqlArg(); };
@@ -154,15 +252,14 @@ module.exports = function () {
 	};
 	Date.prototype.subtract = function (value, interval = 'miliseconds') {
 		switch (interval) {
-			case 'second': case 'seconds': return this.setSeconds(this.getSeconds() - value);
-			case 'minute': case 'minutes': return this.setMinutes(this.getMinutes() - value);
-			case 'hour': case 'hours': return this.setHours(this.getHours() - value);
-			case 'day': case 'days': return this.setDate(this.getDate() - value);
-			case 'week': case 'weeks': return this.setDate(this.getDate() - value * 7);
-			case 'month': case 'months': return this.setSeconds(this.getMonth() - value);
-			case 'year': case 'years': return this.setFullYear(this.getFullYear() - value);
-			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() - value);
-				break;
+			case 'second': case 'seconds': this.setSeconds(this.getSeconds() - value); return this;
+			case 'minute': case 'minutes': this.setMinutes(this.getMinutes() - value); return this;
+			case 'hour': case 'hours': this.setHours(this.getHours() - value); return this;
+			case 'day': case 'days': this.setDate(this.getDate() - value); return this;
+			case 'week': case 'weeks': this.setDate(this.getDate() - value * 7); return this;
+			case 'month': case 'months': this.setMonth(this.getMonth() - value); return this;
+			case 'year': case 'years': this.setFullYear(this.getFullYear() - value); return this;
+			case 'milisecond': case 'miliseconds': setMilliseconds(this.getMilliseconds() - value); return this;
 			default:
 				return this;
 		}
@@ -174,10 +271,9 @@ module.exports = function () {
 			case 'hour': case 'hours': this.setHours(this.getHours() + value); return this;
 			case 'day': case 'days': this.setDate(this.getDate() + value); return this;
 			case 'week': case 'weeks': this.setDate(this.getDate() + value * 7); return this;
-			case 'month': case 'months': this.setSeconds(this.getMonth() + value); return this;
+			case 'month': case 'months': this.setMonth(this.getMonth() + value); return this;
 			case 'year': case 'years': this.setFullYear(this.getFullYear() + value); return this;
 			case 'milisecond': case 'miliseconds': this.setMilliseconds(this.getMilliseconds() + value); return this;
-				break;
 			default:
 				return this;
 		}
@@ -259,7 +355,7 @@ module.exports = function () {
 			Mmm: month.substr(0, 1).toUpperCase() + month.substr(1, 2).toLowerCase(),
 			mmm: month.substr(0, 3).toLowerCase(), MMM: month.substr(0, 3).toUpperCase(),
 			MM: (d.getMonth() + 1).toString().padStart(2, '0'), M: (d.getMonth() + 1).toString(),
-			dd: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
+			dd: d.getDate().toString().padStart(2, '0'), d: (d.getDate()).toString(),
 			DD: d.getDate().toString().padStart(2, '0'), D: (d.getDate()).toString(),
 			HH: d.getHours().toString().padStart(2, '0'), H: d.getHours().toString(),
 			hh: (d.getHours() % 12).toString().padStart(2, '0'), h: (d.getHours() % 12).toString(),
@@ -270,8 +366,8 @@ module.exports = function () {
 			S: d.getMilliseconds().toString().padStart(3, '0'),
 			ss: d.getSeconds().toString().padStart(2, '0'), s: d.getSeconds().toString(),
 			P: d.getHours() <= 12 ? 'AM' : 'PM',
-			T:'T',
-			TZ:tz
+			T: 'T',
+			TZ: tz
 		};
 		let formats = {
 			default: `${f.yyyy}-${f.MM}-${f.dd} ${f.HH}:${f.mm}:${f.ss}.${f.sss}`,
