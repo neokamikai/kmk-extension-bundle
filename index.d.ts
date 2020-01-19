@@ -35,6 +35,7 @@ declare global {
 		convertAll(fieldName: string): Array<any>
 		toObjectID(): Array<ObjectId>
 		paginate(itensPerPage: number): any
+		sum(): number
 		sum(fieldName: string): number
 		sum(valueSelector: (item: T) => number): number
 		media(fieldName: string): number
