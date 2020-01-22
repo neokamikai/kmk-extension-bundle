@@ -196,10 +196,10 @@ module.exports = function () {
 	const LOG_ERROR = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_RED + '[Error]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const LOG_WARNING = CONSOLE_ATTRIBUTES.BOLD + CONSOLE_COLORS.TEXT_YELLOW + '[Warning]' + CONSOLE_ATTRIBUTES.RESET + CONSOLE_COLORS.TEXT_LIGHTGRAY;
 	const DATE_LOG = () => CONSOLE_COLORS.TEXT_BRIGHT_MAGENTA + (new Date()).format();
-	console.log = console.logInfo = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_INFO].concat(Object.values(arguments))); };
-	console.logImportant = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_IMPORTANT].concat(Object.values(arguments))); };
-	console.logError = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_ERROR].concat(Object.values(arguments))); };
-	console.logWarning = function () { this.nativeLog.apply(this, [DATE_LOG(), LOG_WARNING].concat(Object.values(arguments))); };
+	console.log = console.logInfo = function () { console.nativeLog.apply(console, [DATE_LOG(), LOG_INFO].concat(Object.values(arguments))); };
+	console.logImportant = function () { console.nativeLog.apply(console, [DATE_LOG(), LOG_IMPORTANT].concat(Object.values(arguments))); };
+	console.logError = function () { console.nativeLog.apply(console, [DATE_LOG(), LOG_ERROR].concat(Object.values(arguments))); };
+	console.logWarning = function () { console.nativeLog.apply(console, [DATE_LOG(), LOG_WARNING].concat(Object.values(arguments))); };
 	Array.prototype.convertAll = function (f) {
 		var p = f;
 		if (typeof f !== 'function') f = function (a) { return a[p]; };
