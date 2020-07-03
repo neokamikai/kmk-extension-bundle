@@ -54,6 +54,11 @@ const CONSOLE_COLORS = {
 	, TEXT_BRIGHT_LIGHTCYAN: CONSOLE_ATTRIBUTES.BOLD + '\x1b[96m'
 	, TEXT_BRIGHT_WHITE: CONSOLE_ATTRIBUTES.BOLD + '\x1b[97m'
 };
+const interpolate = (text, data) =>{
+    var keys = Object.keys(data||{}).map(key => `${key} = ${JSON.stringify(data[key])}`);
+    var vars = keys.length > 0?'var '+keys.join(',')+';':'';
+    return new Function( `${vars}return \`${text}\`;`)()
+}
 function validaEAN14(ean) {
 	return ean[13] == Math.ceil(((parseInt(ean[0]) + parseInt(ean[2]) + parseInt(ean[4]) + parseInt(ean[6]) + parseInt(ean[8]) + parseInt(ean[10]) + parseInt(ean[12])) * 3 + (parseInt(ean[1]) + parseInt(ean[3]) + parseInt(ean[5]) + parseInt(ean[7]) + parseInt(ean[9]) + parseInt(ean[11])) * 1) / 10) * 10 - ((parseInt(ean[0]) + parseInt(ean[2]) + parseInt(ean[4]) + parseInt(ean[6]) + parseInt(ean[8]) + parseInt(ean[10]) + parseInt(ean[12])) * 3 + (parseInt(ean[1]) + parseInt(ean[3]) + parseInt(ean[5]) + parseInt(ean[7]) + parseInt(ean[9]) + parseInt(ean[11])) * 1);
 }
@@ -560,3 +565,4 @@ module.exports = function () {
 module.exports.default = module.exports;
 module.exports.CONSOLE_ATTRIBUTES = CONSOLE_ATTRIBUTES;
 module.exports.CONSOLE_COLORS = CONSOLE_COLORS;
+module.exports.interpolate = interpolate;
