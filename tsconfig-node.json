@@ -1,0 +1,21 @@
+{
+    "compileOnSave": true,
+    "exclude": [
+        "node_modules/**/*"
+    ],
+    "compilerOptions": {
+        "alwaysStrict": true,
+        "declaration": true,
+        "declarationMap": true,
+        "resolveJsonModule": true,
+				"sourceMap": true,
+				"outDir": "dist-node",
+        "lib": [
+            "ES2020",
+            "ScriptHost",
+            "DOM"
+        ],
+        "module": "CommonJS",
+        "target": "ES2019"
+    }
+}

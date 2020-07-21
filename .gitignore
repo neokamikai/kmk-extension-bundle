@@ -62,3 +62,8 @@ typings/
 
 # testing files
 test
+
+dist
+
+*.lock
+package-lock.json

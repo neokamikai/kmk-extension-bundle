@@ -50,7 +50,8 @@ declare global {
 		sum(valueSelector: (item: T) => number): number
 		media(fieldName: string): number
 		media(valueSelector: (item: T) => number): number
-
+		flat(): Array<T>
+		first(): T
 		last(): T
 		top(nElements: number): Array<T>
 		bottom(nElements: number): Array<T>
@@ -66,6 +67,7 @@ declare global {
 		toArray(): Array<number>
 		toArray(offset: number): Array<number>
 		fraction(): number
+		safeSqlArg(): string
 	}
 	export interface RegExpConstructor {
 		escape(s: string): string
@@ -88,11 +90,20 @@ declare global {
 		left(nChars: number): string
 		right(nChars: number): string
 		mask(mask: string): string
+		safeSqlArg(): string
+	}
+	export interface LocaleConfig {
+		monthNames: [string,string,string,string,string,string,string,string,string,string,string,string]
+		shortMonthNames: [string,string,string,string,string,string,string,string,string,string,string,string]
+		weekNames: [string,string,string, string, string,string,string]
+		weekShortNames: [string,string,string, string, string,string,string]
+		weekShortNames2: [string,string,string, string, string,string,string]
+		weekInitials: [string,string,string, string, string,string,string]
 	}
 	export interface Date {
 		toDate(): Date
-		subtract(value: number, interval: 'miliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): Date
-		add(value: number, interval: 'miliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): Date
+		subtract(value: number, interval: 'milisecond' | 'miliseconds' | 'second' | 'seconds' | 'minute' | 'minutes' | 'hour' | 'hours' | 'day' | 'days' | 'week' | 'weeks' | 'month' | 'months' | 'year' | 'years'): Date
+		add(value: number, interval: 'milisecond' | 'miliseconds' | 'second' | 'seconds' | 'minute' | 'minutes' | 'hour' | 'hours' | 'day' | 'days' | 'week' | 'weeks' | 'month' | 'months' | 'year' | 'years'): Date
 		zeroTime(): Date
 		endOfDay(): Date
 		toRange(): { start: Date, end: Date }
@@ -101,27 +112,37 @@ declare global {
 		 * You can enclose static text with brackets, i.e: 'MM/DD/YYYY [at] HH[h]mm[m]'
 		 * @param fmt
 		 */
-		format(fmt?: string): string;
+		format(fmt?: string, locale?: string): string;
 		/**
 		 *
 		 * @param fmt
 		 */
-		format(fmt?: 'default' | 'json' | 'sql' | 'utc' | 'JSON' | 'SQL' | 'UTC'): string
+		format(fmt: 'default' | 'json' | 'sql' | 'utc' | 'JSON' | 'SQL' | 'UTC', locale: string): string
 	}
 	export interface DateConstructor {
 		today(): Date
 		tomorrow(): Date
 		yesterday(): Date
 		todayRange(): { start: Date, end: Date }
+		toDate(): Date
+		locales: {
+			[langId: string]: LocaleConfig
+		}
 	}
 	export interface Console {
+		nativeLog(message?: any, ...args: any[]): void
+		nativeWarn(message?: any, ...args: any[]): void
+		nativeError(message?: any, ...args: any[]): void
 		logInfo(message?: any, ...optionalParams: any[]): void
 		logError(message?: any, ...optionalParams: any[]): void
 		logImportant(message?: any, ...optionalParams: any[]): void
 		logWarning(message?: any, ...optionalParams: any[]): void
 	}
-
+	export interface Boolean {		
+		safeSqlArg(): string
+	}
 	export interface RegExp {
 		escape(s: string): string
+		matches(input: string): Array<Array<string> & {match_length:number, end: number}>
 	}
 }

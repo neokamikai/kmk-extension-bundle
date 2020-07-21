@@ -1,0 +1,25 @@
+{
+    "compileOnSave": true,
+    "exclude": [
+				"node_modules/**/*",
+				"test/**/*",
+				"dist/**/*",
+				"src/**/node.ts"
+		],
+		"include": ["src/browser.ts"],
+    "compilerOptions": {
+        "alwaysStrict": true,
+        "declaration": true,
+				"declarationMap": true,
+				"inlineSourceMap": true,
+				"outFile": "dist/index.js",
+				"baseUrl": ".",
+        "lib": [
+            "ES2020",
+            "ScriptHost",
+            "DOM"
+        ],
+        "module": "None",
+        "target": "ES3"
+		}
+}
